@@ -1,10 +1,20 @@
 import github
 import getpass
 
-print("Github login")
-token = getpass.getpass("Access Token")
+def loginToGithub():
+    print("Github login")
+    token = getpass.getpass("Access Token")
+    try:
+        g = github.Github(token)
+        testLogin = g.get_user().login
+        print(testLogin)
 
-g = github.Github(token)
+        createGithubRepo()
+        
+    except:
+        print("Invalid access token")
 
-for repo in g.get_user().get_repos():
-    print(repo.name)
+def createGithubRepo():
+    pass
+
+loginToGithub()
