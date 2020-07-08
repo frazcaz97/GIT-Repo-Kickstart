@@ -1,5 +1,7 @@
 import github
 import getpass
+import git
+import os
 
 def loginToGithub():
     print("GITHUB LOGIN")
@@ -7,41 +9,46 @@ def loginToGithub():
     try: #test login is valid
         g = github.Github(token)
         testLogin = g.get_user().login
-        print(testLogin)
-    except:
-        print("Invalid Access Token")
+    except github.GithubException as exception:
+        if "401" in str(exception):
+            print("Invalid Access Token")
+        else:
+            print("credential error")
     else:
         createRemoteRepo(g)
 
 def createRemoteRepo(login):
+    print("New repository name must not conflict with current local/remote repository names")
     repoName = input("Input new repository name: ")
-    validName = True
+
     if " " in repoName: #format repo name for github
         print("there is white space")
         repoName = repoName.replace(" ", "-")
-
-    for repo in login.get_user().get_repos(): #check repo name is valid
-        print(repo.name)
-        if repoName == repo.name:
-            validName = False
-            break;
-            
-    if validName is True: # try to init the repo
-        print("this name has not been used before")
-
-        try:
+        
+    if checkDirectoryName(repoName) is True: #local repo name is unique
+        try: #check new repo name is valid
+            checkDirectoryName(repoName)
             login.get_user().create_repo(repoName,private=True)
-            createLocalRepo()
-        except:
-            print("Something went wrong creating your new remote repo")
-            
-    else: #ask user to enter a new name
-        print("repository name already exists, please try again")
+        except github.GithubException as exception:
+            if "422" in str(exception):
+                print("Remote repository name already exists")
+                createRemoteRepo(login)
+            else:
+                print("Remote repository error")
+    else:
+        print("Local repository name already exists")
         createRemoteRepo(login)
-                
-def createLocalRepo():
+        
+def checkDirectoryName(name):
+    dir = os.path.join("D:\\","code",name) #local repo file path
+    if not os.path.exists(dir): #file path is valid
+        return True
+    else:
+        return False
+
+
+def createLocalRepo(name):
     pass
 
 loginToGithub()
-#g = github.Github("")
-#createGithubRepo(g)
+
