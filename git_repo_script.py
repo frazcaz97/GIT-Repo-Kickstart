@@ -11,9 +11,9 @@ def loginToGithub():
     except:
         print("Invalid Access Token")
     else:
-        createGithubRepo(g)
+        createRemoteRepo(g)
 
-def createGithubRepo(login):
+def createRemoteRepo(login):
     repoName = input("Input new repository name: ")
     validName = True
     if " " in repoName: #format repo name for github
@@ -30,16 +30,18 @@ def createGithubRepo(login):
         print("this name has not been used before")
 
         try:
-            pass
+            login.get_user().create_repo(repoName,private=True)
+            createLocalRepo()
         except:
-            pass
+            print("Something went wrong creating your new remote repo")
+            
     else: #ask user to enter a new name
         print("repository name already exists, please try again")
-        createGithubRepo(login)
+        createRemoteRepo(login)
                 
-            
-    #init new repo if name is valid
+def createLocalRepo():
+    pass
 
-#loginToGithub()
-g = github.Github("")
-createGithubRepo(g)
+loginToGithub()
+#g = github.Github("")
+#createGithubRepo(g)
