@@ -67,6 +67,7 @@ def createRemoteLink(repoDir,name):
         url = "https://github.com/" + g.get_user().login + "/" + g.get_user().get_repo(name).name + ".git"
         git.Repo(repoDir).create_remote("origin",url)
         print("Git remote origin set")
+        print("setup complete")
     except Exception as exception:
         print(exception)
 
