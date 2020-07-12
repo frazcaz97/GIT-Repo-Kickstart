@@ -1,11 +1,11 @@
 import github
-import getpass
 import git
 import os
 
 print("GITHUB LOGIN")
-token = getpass.getpass("Access Token: ")   #input token without echo to console
+token = input("Access Token: ")
 filePath = "D://code/" #file path for git repo directories
+
 
 def loginToGithub(token):
     try:   #test login is valid
@@ -16,6 +16,7 @@ def loginToGithub(token):
             print("Invalid Access Token")
             loginToGithub()
         else:
+            print(exception)
             print("credential error")
             input()
     else:   #login is valid, continue script
@@ -72,5 +73,3 @@ def createRemoteLink(repoDir,name):
         print(exception)
 
 loginToGithub(token)
-
-
