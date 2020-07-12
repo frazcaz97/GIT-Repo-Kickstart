@@ -14,4 +14,3 @@ This script:
 -The Following Python modules:
   - pyGithub
   - gitPython
-  - getpass  
