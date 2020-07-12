@@ -3,14 +3,14 @@ import getpass
 import git
 import os
 
-filePath = "D://code/" #local repo's directory
+print("GITHUB LOGIN")
+token = getpass.getpass("Access Token: ")   #input token without echo to console
+filePath = "D://code/" #file path for git repo directories
 
-def loginToGithub():
-    print("GITHUB LOGIN")
-    token = getpass.getpass("Access Token: ")   #input token without echo to console
+def loginToGithub(token):
     try:   #test login is valid
-        g = github.Github(token)
-        testLogin = g.get_user().login
+        githubUser = github.Github(token)
+        testLogin = githubUser.get_user().login
     except github.GithubException as exception:
         if "401" in str(exception):
             print("Invalid Access Token")
@@ -18,12 +18,12 @@ def loginToGithub():
         else:
             print("credential error")
             input()
-    else:
-        createRemoteRepo(g)
+    else:   #login is valid, continue script
+        createRemoteRepo(githubUser)
 
 def createRemoteRepo(login):
     print("New repository name must not conflict with current local/remote repository names")
-    repoName = input("Input new repository name: ")
+    repoName = input("New repository name: ")
 
     if " " in repoName:   #format repo name for github
         repoName = repoName.replace(" ", "-")
@@ -31,6 +31,7 @@ def createRemoteRepo(login):
     if checkLocalName(repoName) is True:   #local repo name is unique
         try:   #check new repo name is valid
             login.get_user().create_repo(repoName,private=True)
+            print("Github remote repository initialised")
             createLocalRepo(repoName)
         except github.GithubException as exception:
             if "422" in str(exception):
@@ -38,6 +39,7 @@ def createRemoteRepo(login):
                 createRemoteRepo(login)
             else:
                 print("Remote repository error")
+                input()
     else:
         print("Local repository name already exists")
         createRemoteRepo(login)
@@ -53,10 +55,21 @@ def createLocalRepo(name):
     try:    #initialise the local repo 
         repoDir = os.path.join(filePath,name)
         init = git.Repo.init(repoDir)
-        #remote = repoDir.create_remote("origin", remoteURL)
+        print("Git local repository initialised")
+        createRemoteLink(repoDir,name)
     except Exception as exception:
         print("Local repository error")
+        input()
 
-loginToGithub()
+def createRemoteLink(repoDir,name):
+    try:    #create the remote link
+        g = github.Github(token)
+        url = "https://github.com/" + g.get_user().login + "/" + g.get_user().get_repo(name).name + ".git"
+        git.Repo(repoDir).create_remote("origin",url)
+        print("Git remote origin set")
+    except Exception as exception:
+        print(exception)
+
+loginToGithub(token)
 
 
