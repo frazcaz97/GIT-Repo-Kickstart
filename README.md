@@ -1,4 +1,4 @@
-# GIT local/remote initialising script
+# GIT local/remote kickstart script
 
 ## Overview
 This script:
