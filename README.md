@@ -2,9 +2,9 @@
 
 ## Overview
 This script:
-  - Initialises a new local repository 
   - Initialises a new remote repository
-  - Sets the remote link
+  - clones remote repository to local
+  - Sets the remote url
 
 ## Requirements
 -Git installed on your local machine
