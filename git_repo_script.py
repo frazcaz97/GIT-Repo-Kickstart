@@ -14,7 +14,7 @@ def loginToGithub(token):
     except github.GithubException as exception:
         if "401" in str(exception):
             print("Invalid Access Token")
-            loginToGithub()
+            input()
         else:
             print(exception)
             print("credential error")
@@ -33,7 +33,7 @@ def createRemoteRepo(login):
         try:   #check new repo name is valid
             login.get_user().create_repo(repoName,private=True)
             print("Github remote repository initialised")
-            createLocalRepo(repoName)
+            cloneRemote(repoName)
         except github.GithubException as exception:
             if "422" in str(exception):
                 print("Remote repository name already exists")
@@ -52,24 +52,17 @@ def checkLocalName(name):
     else:
         return False
 
-def createLocalRepo(name):
-    try:    #initialise the local repo 
+def cloneRemote(name):
+    try:    #clone remote to local/ setup remote url
         repoDir = os.path.join(filePath,name)
-        init = git.Repo.init(repoDir)
-        print("Git local repository initialised")
-        createRemoteLink(repoDir,name)
-    except Exception as exception:
-        print("Local repository error")
-        input()
-
-def createRemoteLink(repoDir,name):
-    try:    #create the remote link
         g = github.Github(token)
         url = "https://github.com/" + g.get_user().login + "/" + g.get_user().get_repo(name).name + ".git"
+        git.Repo.clone_from(url, repoDir)
+        print("Git local repository initialised")
         git.Repo(repoDir).create_remote("origin",url)
-        print("Git remote origin set")
-        print("setup complete")
+        print("Remote url set")
+        print("Complete")
     except Exception as exception:
-        print(exception)
+        print("Clone remote repository error")
 
 loginToGithub(token)
