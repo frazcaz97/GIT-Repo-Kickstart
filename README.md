@@ -14,3 +14,15 @@ This script:
 -The Following Python modules:
   - pyGithub
   - gitPython
+
+## File Path
+
+The script requires a file path to clone the remote repo to
+
+```python
+print("GITHUB LOGIN")
+token = input("Access Token: ")
+filePath = "/home/User/Documents/git-repos/" #file path for git repo directories
+```
+
+change the filePath variable to suit your file location
